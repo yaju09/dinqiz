@@ -41,7 +41,7 @@ function Question() {
       clearTimeout(timer);
       clearInterval(interval);
     };
-  }, [currentQuestionIndex, remainingTime]);
+  }, [currentQuestionIndex, remainingTime, router]);
 
   return (
     <>
