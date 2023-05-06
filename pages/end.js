@@ -12,9 +12,6 @@ function Welcome() {
 
   //global context
   const { userName, setUserName } = useContext(GlobalContext);
-  function routeChangeHandler() {
-    router.push("/question");
-  }
 
   return (
     <>
