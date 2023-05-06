@@ -1,26 +1,60 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 //next
 import Head from "next/head";
 import { useRouter } from "next/router";
 // global context
 import { GlobalContext } from "../components/utils/globalContext";
+//uuid
+import { v4 as uuid4 } from "uuid";
+// api routes
+import * as pscaleAPI from "../constants/node-api";
+// global const
+import { quizAdminKey } from "../constants/globalConstants";
 
 function UserRegistration() {
   //router
   const router = useRouter();
 
   //global context
-  const { userName, setUserName } = useContext(GlobalContext);
+  const { userName, setUserName, setCurrentUserId } = useContext(GlobalContext);
+
+  useEffect(() => {
+    const userEmail = window.sessionStorage.getItem("quiz_user_email");
+    if (userEmail == quizAdminKey) router.push("/question");
+  }, [router]);
 
   //local states
   const [email, setEmail] = useState("");
+  const [adminKey, setAdminKey] = useState("");
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log(`Email: ${email}, User Name: ${userName}`);
-    if (email && userName) {
-      router.push("/welcome");
-    }
+    if (!email || !userName) return;
+    fetch(pscaleAPI.USER_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        username: userName,
+        email: email,
+        unique_id: uuid4(),
+      }),
+    })
+      .then((response) => {
+        if (response.status == 200) {
+          return response.json();
+        }
+      })
+      .then((response) => {
+        console.log("====data", response);
+        window.sessionStorage.setItem("quiz_user_email", email);
+        window.sessionStorage.setItem("admin_key", adminKey);
+        setCurrentUserId(response.data.id);
+        router.push("/welcome");
+      })
+      .catch((err) => {
+        console.log("===err", err);
+        // Catch and display errors
+      });
   };
 
   return (
@@ -62,6 +96,20 @@ function UserRegistration() {
                 placeholder="Email address"
               />
             </div>
+          </div>
+
+          <div className="my-6">
+            <label>{"Admin Key (for admin only)"}</label>
+            <input
+              id="admin_key"
+              name="admin_key"
+              type="password"
+              required
+              value={adminKey}
+              onChange={(event) => setAdminKey(event.target.value)}
+              className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+              placeholder="Admin Key"
+            />
           </div>
 
           <div>

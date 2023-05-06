@@ -1,0 +1,56 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Session {
+  id                     Int            @id @default(autoincrement())
+  createdAt              DateTime       @default(now())
+  completed_at           DateTime?
+  is_completed           Boolean        @default(false)
+  current_question_index Int            @default(0)
+  UserResponse           UserResponse[]
+}
+
+model User {
+  id           Int            @id @default(autoincrement())
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  username     String         @db.VarChar(255)
+  email        String         @db.VarChar(255)
+  unique_id    String         @db.VarChar(255)
+  is_admin     Boolean        @default(false)
+  UserResponse UserResponse[]
+
+  @@unique([email, unique_id])
+}
+
+model Question {
+  id           Int            @id @default(autoincrement())
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  body         Json           @db.Json
+  UserResponse UserResponse[]
+}
+
+model UserResponse {
+  id          Int      @id @default(autoincrement())
+  user        User     @relation(fields: [user_id], references: [id])
+  user_id     Int      @db.Int
+  session     Session  @relation(fields: [session_id], references: [id])
+  session_id  Int      @db.Int
+  question    Question @relation(fields: [question_id], references: [id])
+  question_id Int      @db.Int
+  response    Json     @db.Json
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  is_correct  Boolean  @default(false)
+}

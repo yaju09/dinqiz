@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 
-function QuestionBody({ question }) {
+function QuestionBody({ question, responseSubmitHandler }) {
   //local states
   const [userAnswer, setUserAnswer] = useState(null);
-  console.log("====user answer", userAnswer);
+
   function userAnswerHandler(optionId) {
     setUserAnswer(optionId);
+    responseSubmitHandler(optionId);
   }
-  console.log("==question", question);
+
   return (
     <div className="w-2/5">
       <div className="my-8 flex gap-2 text-xl font-semibold">
@@ -17,7 +18,7 @@ function QuestionBody({ question }) {
       {question.options.map((option, index) => {
         return (
           <div
-            onClick={() => setUserAnswer(option.id)}
+            onClick={() => userAnswerHandler(option.id)}
             key={option.id}
             className={`my-4 px-4 py-2 border border-solid rounded ${
               userAnswer === option.id
