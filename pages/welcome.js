@@ -30,6 +30,33 @@ function Welcome() {
     }
   }, []);
 
+  // for non admin only
+  useEffect(() => {
+    const savedAdminKey = window.sessionStorage.getItem("admin_key");
+    if (quizAdminKey == savedAdminKey) return;
+    const interval = setInterval(() => {
+      fetch(pscaleAPI.SESSION_ENDPOINT, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      })
+        .then((response) => {
+          if (response.status == 200) {
+            return response.json();
+          }
+        })
+        .then((response) => {
+          if (response.data.is_completed === false) {
+            clearInterval(interval);
+            router.push("/question");
+          }
+        })
+        .catch((err) => {
+          // Catch and display errors
+        });
+    }, 2000);
+  }, [router, adminKey]);
+
+  //for admin only
   function routeChangeHandler() {
     let payload = {};
 
@@ -50,7 +77,7 @@ function Welcome() {
       .then((response) => {
         setCurrentSessionId(response.data.id);
         setLoader(false);
-        router.push("/question");
+        router.push("/score-board");
       })
       .catch((err) => {
         setLoader(false);

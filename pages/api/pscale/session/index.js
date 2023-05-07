@@ -27,8 +27,29 @@ const sessionCreateHandler = async (req, res) => {
       }
       break;
 
+    case "GET":
+      try {
+        const sessionResponse = await prismaClient.session.findFirst({
+          where: {
+            is_completed: false,
+          },
+        });
+
+        if (!sessionResponse) throw new Error("Could not find session.");
+
+        res.status(200).json({
+          status: "success",
+          data: sessionResponse,
+        });
+      } catch (error) {
+        res
+          .status(400)
+          .json({ status: "error", code: error.code, message: error.message });
+      }
+      break;
+
     default:
-      res.setHeader("Allow", ["GET"]);
+      res.setHeader("Allow", ["GET", "POST"]);
       res.status(405).end(`Method ${method} Not Allowed`);
   }
 };

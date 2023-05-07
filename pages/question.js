@@ -2,8 +2,6 @@ import React, { useEffect, useState, useCallback, useContext } from "react";
 //next
 import Head from "next/head";
 import { useRouter } from "next/router";
-// helpers
-// import { questionData } from "../components/utils/staticQuestionData";
 // components
 import QuestionBody from "../components/QuestionBody";
 import TopNavLayout from "../components/TopNavLayout";
@@ -17,6 +15,8 @@ import { questionDurationInSeconds } from "../constants/globalConstants";
 import { GlobalContext } from "../components/utils/globalContext";
 // api routes
 import * as pscaleAPI from "../constants/node-api";
+//hook
+import useInterval from "../hooks/useInterval";
 
 function Question() {
   //router
@@ -27,22 +27,46 @@ function Question() {
 
   //local states
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  console.log("===currentquestionindex", currentQuestionIndex);
   const [remainingTime, setRemainingTime] = useState(questionDurationInSeconds);
   const [questionData, setQuestionData] = useState([]);
+  console.log("====question data", questionData);
+  const [currentSession, setCurrentSession] = useState(null);
   // To run the timer, to change question and to redirect to end page if no more questions are there.
   useEffect(() => {
     const timer = setTimeout(() => {
-      const maxIndex = questionData.length - 1;
-      if (currentQuestionIndex < maxIndex) {
-        setCurrentQuestionIndex(currentQuestionIndex + 1);
-      } else if (currentQuestionIndex >= maxIndex) {
-        router.push("/end");
-      }
-
       setRemainingTime(questionDurationInSeconds);
     }, remainingTime * 1000);
 
     const interval = setInterval(() => {
+      fetch(pscaleAPI.SESSION_ENDPOINT, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      })
+        .then((response) => {
+          if (response.status == 200) {
+            return response.json();
+          }
+        })
+        .then((response) => {
+          console.log("===response111", response.data.current_question_index);
+          console.log("===curr question index222", currentQuestionIndex);
+          console.log(
+            "====333",
+            currentQuestionIndex < response.data.current_question_index
+          );
+          console.log("====4444", response.data.is_completed);
+          setCurrentQuestionIndex(currentQuestionIndex);
+          setRemainingTime(questionDurationInSeconds);
+          if (response.data.is_completed) {
+            router.push("/end");
+            clearTimeout(timer);
+            clearInterval(interval);
+          }
+        })
+        .catch((err) => {
+          // Catch and display errors
+        });
       setRemainingTime((prevRemainingTime) => prevRemainingTime - 1);
     }, 1000);
 
@@ -51,21 +75,6 @@ function Question() {
       clearInterval(interval);
     };
   }, [currentQuestionIndex, remainingTime, router, questionData.length]);
-
-  //browser back button has been disabled
-  useEffect(() => {
-    router.beforePopState(({ as }) => {
-      if (as !== router.asPath) {
-        history.forward();
-        return false;
-      }
-      return true;
-    });
-
-    return () => {
-      router.beforePopState(() => true);
-    };
-  }, [router]);
 
   useEffect(() => {
     fetch(pscaleAPI.QUESTION_ENDPOINT, {
@@ -83,6 +92,21 @@ function Question() {
       .catch((err) => {
         // Catch and display errors
       });
+  }, [router]);
+
+  //browser back button has been disabled
+  useEffect(() => {
+    router.beforePopState(({ as }) => {
+      if (as !== router.asPath) {
+        history.forward();
+        return false;
+      }
+      return true;
+    });
+
+    return () => {
+      router.beforePopState(() => true);
+    };
   }, [router]);
 
   const responseSubmitHandler = useCallback(
