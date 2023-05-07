@@ -3,7 +3,6 @@ import React, { useEffect } from "react";
 import { useRouter } from "next/router";
 
 function UserAuth(WrappedComp) {
-  console.log("===", WrappedComp);
   //router
 
   function Wrapper(props) {

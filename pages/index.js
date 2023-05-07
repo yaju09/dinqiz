@@ -26,9 +26,11 @@ function UserRegistration() {
   //local states
   const [email, setEmail] = useState("");
   const [adminKey, setAdminKey] = useState("");
+  const [loader, setLoader] = useState(false);
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    setLoader(true);
     if (!email || !userName) return;
     fetch(pscaleAPI.USER_ENDPOINT, {
       method: "POST",
@@ -45,14 +47,14 @@ function UserRegistration() {
         }
       })
       .then((response) => {
-        console.log("====data", response);
         window.sessionStorage.setItem("quiz_user_email", email);
         window.sessionStorage.setItem("admin_key", adminKey);
         setCurrentUserId(response.data.id);
+        setLoader(false);
         router.push("/welcome");
       })
       .catch((err) => {
-        console.log("===err", err);
+        setLoader(false);
         // Catch and display errors
       });
   };
@@ -104,7 +106,6 @@ function UserRegistration() {
               id="admin_key"
               name="admin_key"
               type="password"
-              required
               value={adminKey}
               onChange={(event) => setAdminKey(event.target.value)}
               className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
@@ -117,7 +118,7 @@ function UserRegistration() {
               type="submit"
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-xl font-semibold font bg-green-500 rounded-xl"
             >
-              Submit
+              {`${loader ? "Submitting..." : "Submit"}`}
             </button>
           </div>
         </form>

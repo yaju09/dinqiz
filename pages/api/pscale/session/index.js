@@ -3,12 +3,12 @@ import { prismaClient } from "../../../../lib/prisma";
 
 const sessionCreateHandler = async (req, res) => {
   const { body, method } = req;
-  console.log("===================body", body);
+
   switch (method) {
     case "POST":
       try {
         let payload = body;
-        console.log("=====payload", payload.is_completed);
+
         const sessionCreateResponse = await prismaClient.session.create({
           data: payload,
         });
@@ -21,7 +21,6 @@ const sessionCreateHandler = async (req, res) => {
           data: sessionCreateResponse,
         });
       } catch (error) {
-        console.log("======error", error);
         res
           .status(400)
           .json({ status: "error", code: error.code, message: error.message });

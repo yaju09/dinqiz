@@ -3,7 +3,7 @@ import React, { useEffect, useState, useCallback, useContext } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 // helpers
-import { questionData } from "../components/utils/staticQuestionData";
+// import { questionData } from "../components/utils/staticQuestionData";
 // components
 import QuestionBody from "../components/QuestionBody";
 import TopNavLayout from "../components/TopNavLayout";
@@ -28,7 +28,7 @@ function Question() {
   //local states
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [remainingTime, setRemainingTime] = useState(questionDurationInSeconds);
-
+  const [questionData, setQuestionData] = useState([]);
   // To run the timer, to change question and to redirect to end page if no more questions are there.
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -50,7 +50,7 @@ function Question() {
       clearTimeout(timer);
       clearInterval(interval);
     };
-  }, [currentQuestionIndex, remainingTime, router]);
+  }, [currentQuestionIndex, remainingTime, router, questionData.length]);
 
   //browser back button has been disabled
   useEffect(() => {
@@ -67,17 +67,33 @@ function Question() {
     };
   }, [router]);
 
+  useEffect(() => {
+    fetch(pscaleAPI.QUESTION_ENDPOINT, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    })
+      .then((response) => {
+        if (response.status == 200) {
+          return response.json();
+        }
+      })
+      .then((response) => {
+        setQuestionData(response.data);
+      })
+      .catch((err) => {
+        // Catch and display errors
+      });
+  }, [router]);
+
   const responseSubmitHandler = useCallback(
     (userAnswer) => {
+      const question = questionData[currentQuestionIndex];
       let payload = {
         user_id: currentUserId,
         session_id: currentSessionId,
-        question_id: questionData[currentQuestionIndex].sr,
+        question_id: question.id,
         response: { answer: userAnswer },
-        is_correct:
-          userAnswer == questionData[currentQuestionIndex].answer
-            ? true
-            : false,
+        is_correct: userAnswer == question.body.answer ? true : false,
       };
 
       fetch(pscaleAPI.USER_RESPONSE_ENDPOINT, {
@@ -86,22 +102,16 @@ function Question() {
         body: JSON.stringify(payload),
       })
         .then((response) => {
-          console.log("====data", response);
           if (response.status == 200) {
             return response.json();
           }
         })
-        .then((response) => {
-          console.log("====data", response);
-          setCurrentSessionId(response.data.id);
-          router.push("/question");
-        })
+        .then((response) => {})
         .catch((err) => {
-          console.log("===err", err);
           // Catch and display errors
         });
     },
-    [currentQuestionIndex, currentSessionId, currentUserId, router]
+    [currentQuestionIndex, currentSessionId, currentUserId, questionData]
   );
 
   return (
@@ -118,13 +128,16 @@ function Question() {
               }`}
             </div>
           </div>
+          {questionData.length > 0 && (
+            <div className="w-full flex justify-center items-center">
+              <QuestionBody
+                question={questionData[currentQuestionIndex].body}
+                responseSubmitHandler={responseSubmitHandler}
+                srNo={currentQuestionIndex + 1}
+              />
+            </div>
+          )}
 
-          <div className="w-full flex justify-center items-center">
-            <QuestionBody
-              question={questionData[currentQuestionIndex]}
-              responseSubmitHandler={responseSubmitHandler}
-            />
-          </div>
           {/* <div className="flex justify-center">
             <button className="py-2 mt-4 px-4 border-0 bg-orange-400 font-semibold rounded-xl">
               Submit

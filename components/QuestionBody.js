@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-function QuestionBody({ question, responseSubmitHandler }) {
+function QuestionBody({ question, responseSubmitHandler, srNo }) {
   //local states
   const [userAnswer, setUserAnswer] = useState(null);
 
@@ -12,7 +12,7 @@ function QuestionBody({ question, responseSubmitHandler }) {
   return (
     <div className="w-2/5">
       <div className="my-8 flex gap-2 text-xl font-semibold">
-        <div>{`${question.sr}.`}</div>
+        <div>{`${srNo}.`}</div>
         <div>{question.content}</div>
       </div>
       {question.options.map((option, index) => {
