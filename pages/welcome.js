@@ -122,7 +122,7 @@ function Welcome() {
                   <div className="text-lg">Session OTP</div>
                   <div className="w-2/5 border border-solid rounded border-gray-500">
                     <input
-                      className=" border-gray-300 rounded-md  outline-none"
+                      className="w-full border-gray-300 rounded-md  outline-none"
                       type="text"
                       value={sessionOTP}
                       required

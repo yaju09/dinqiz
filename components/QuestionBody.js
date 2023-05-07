@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 
-function QuestionBody({ question, responseSubmitHandler, srNo }) {
+function QuestionBody({
+  question,
+  responseSubmitHandler,
+  srNo,
+  remainingTime,
+}) {
   //local states
   const [userAnswer, setUserAnswer] = useState(null);
 
@@ -18,7 +23,7 @@ function QuestionBody({ question, responseSubmitHandler, srNo }) {
       {question.options.map((option, index) => {
         return (
           <div
-            onClick={() => userAnswerHandler(option.id)}
+            onClick={() => remainingTime && userAnswerHandler(option.id)}
             key={option.id}
             className={`my-4 px-4 py-2 border border-solid rounded ${
               userAnswer === option.id

@@ -1,21 +1,19 @@
 // prisma
-import prisma from "../../../../../../lib/prisma";
+import prisma from "../../../../../lib/prisma";
 
 const sessionUpdateHandler = async (req, res) => {
   const { body, method } = req;
   const { session_otp } = req.query;
   switch (method) {
-    case "POST":
+    case "GET":
       try {
         let payload = body;
 
-        const sessionUpdateResponse = await prisma.session.update({
-          where: { session_otp: parseInt(session_otp) },
-          data: payload,
+        const sessionUpdateResponse = await prisma.session.findFirst({
+          where: { session_otp: session_otp },
         });
 
-        if (!sessionUpdateResponse)
-          throw new Error("Could not update session.");
+        if (!sessionUpdateResponse) throw new Error("Could not find session.");
 
         res.status(200).json({
           status: "success",
@@ -29,7 +27,7 @@ const sessionUpdateHandler = async (req, res) => {
       break;
 
     default:
-      res.setHeader("Allow", ["POST"]);
+      res.setHeader("Allow", ["GET"]);
       res.status(405).end(`Method ${method} Not Allowed`);
   }
 };

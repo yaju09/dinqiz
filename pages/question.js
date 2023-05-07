@@ -27,17 +27,12 @@ function Question() {
 
   //local states
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  console.log("===currentquestionindex", currentQuestionIndex);
   const [remainingTime, setRemainingTime] = useState(questionDurationInSeconds);
   const [questionData, setQuestionData] = useState([]);
-  console.log("====question data", questionData);
   const [currentSession, setCurrentSession] = useState(null);
   // To run the timer, to change question and to redirect to end page if no more questions are there.
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setRemainingTime(questionDurationInSeconds);
-    }, remainingTime * 1000);
-    const user_otp = window.sessionStorage.getItem("user_opt");
+    const user_otp = window.sessionStorage.getItem("user_otp");
     if (!user_otp) return;
     const interval = setInterval(() => {
       fetch(pscaleAPI.SESSION_WITH_OTP_ENDPOINT(user_otp), {
@@ -50,33 +45,29 @@ function Question() {
           }
         })
         .then((response) => {
-          console.log("===response111", response.data.current_question_index);
-          console.log("===curr question index222", currentQuestionIndex);
-          console.log(
-            "====333",
-            currentQuestionIndex < response.data.current_question_index
-          );
-          console.log("====4444", response.data.is_completed);
-          setCurrentQuestionIndex(currentQuestionIndex);
-          // setRemainingTime(questionDurationInSeconds - 1);
+          if (currentQuestionIndex < response.data.current_question_index) {
+            setCurrentQuestionIndex(response.data.current_question_index);
+            setRemainingTime(questionDurationInSeconds);
+          }
           if (response.data.is_completed) {
             router.push("/end");
-            clearTimeout(timer);
+            // clearTimeout(timer);
             clearInterval(interval);
           }
         })
         .catch((err) => {
           // Catch and display errors
         });
-      setRemainingTime((prevRemainingTime) => prevRemainingTime - 1);
+      setRemainingTime((prevRemainingTime) => {
+        return prevRemainingTime - 1 >= 0 ? prevRemainingTime - 1 : 0;
+      });
     }, 1000);
 
     return () => {
-      clearTimeout(timer);
+      // clearTimeout(timer);
       clearInterval(interval);
     };
   }, [currentQuestionIndex, remainingTime, router, questionData.length]);
-
   useEffect(() => {
     fetch(pscaleAPI.QUESTION_ENDPOINT, {
       method: "GET",
@@ -159,6 +150,7 @@ function Question() {
                 question={questionData[currentQuestionIndex].body}
                 responseSubmitHandler={responseSubmitHandler}
                 srNo={currentQuestionIndex + 1}
+                remainingTime={remainingTime}
               />
             </div>
           )}

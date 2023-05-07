@@ -32,6 +32,10 @@ function QuestionCreate() {
   }, [router]);
 
   const handleSubmit = (event) => {
+    if (!questionData?.answer) {
+      alert("Please select correct option.");
+      return;
+    }
     event.preventDefault();
     let payload = {
       body: questionData,
