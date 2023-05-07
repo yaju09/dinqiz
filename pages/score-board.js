@@ -12,6 +12,7 @@ import { GlobalContext } from "../components/utils/globalContext";
 import * as pscaleAPI from "../constants/node-api";
 // component
 import TopNavLayout from "../components/TopNavLayout";
+import { data } from "autoprefixer";
 
 function ScoreBoard() {
   //router
@@ -23,6 +24,15 @@ function ScoreBoard() {
   const [questionData, setQuestionData] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [loading, setLoading] = useState(false);
+
+  const [leaderBoard, setLeaderBoard] = useState({});
+
+  let pointsByRank = {
+    1: 5,
+    2: 3,
+    3: 1,
+  };
+
 
   console.log("===curr question index", currentQuestionIndex);
   //get all questions data
@@ -95,6 +105,51 @@ function ScoreBoard() {
     }
   }
 
+  function onAnswered() {
+    fetch(pscaleAPI.FILTERED_USER_RESPONSE_ENDPOINT(session_id, question_id), {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    })
+      .then((response) => {
+        if (response.status == 200) {
+          return response.json();
+        }
+      })
+      .then((response) => {
+        if (response.data) {
+          data = response.data;
+          data.forEach((row, index) => {
+            if (row.user_id in leaderBoard) {
+              setLeaderBoard((prev) => {
+                let t = { ...prev };
+                t[row.user_id]['score'] += index + 1 > 3 ? 0 : pointsByRank[index + 1]
+                return t;
+              })
+            } else {
+              setLeaderBoard((prev) => {
+                let t = { ...prev };
+                t[row.user_id] = {
+                  'name': row.user.name,
+                  'email': row.user.email,
+                  'score': index + 1 > 3 ? 0 : pointsByRank[index + 1],
+                };
+                return t;
+              })
+            }
+          })
+        }
+      })
+
+
+      .catch((err) => {
+        // Catch and display errors
+      });
+  }
+
+
+
+
+
   useEffect(() => {
     const savedAdminKey = window.sessionStorage.getItem("admin_key");
     if (savedAdminKey != quizAdminKey) router.push("/404");
@@ -112,6 +167,26 @@ function ScoreBoard() {
         >
           {loading ? "Loading..." : "Next"}
         </button>
+        <p></p>
+        <table>
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>email</th>
+              <th>Score</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              Object.values(leaderBoard)
+                .map(item => (<tr key={item.email}>
+                  <td>{item.name}</td>
+                  <td>{item.email}</td>
+                  <td>{item.score}</td>
+                </tr>))
+            }
+          </tbody>
+        </table>
       </div>
     </TopNavLayout>
   );
