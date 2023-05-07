@@ -47,6 +47,7 @@ function ScoreBoard() {
   //for admin only to update currentQuestionIndex
   const questionIndexHandler = useCallback(
     (questionIndex, isCompleted) => {
+      setLoading(true);
       let payload = {};
       if (isCompleted) {
         payload = {
@@ -69,11 +70,13 @@ function ScoreBoard() {
           }
         })
         .then((response) => {
+          setLoading(false);
           if (response.data.is_completed) {
             router.push("/end");
           }
         })
         .catch((err) => {
+          setLoading(false);
           // Catch and display errors
         });
     },
@@ -81,7 +84,6 @@ function ScoreBoard() {
   );
 
   function onNextHandler() {
-    setLoading(true);
     if (!questionData?.length) return;
 
     const maxIndex = questionData.length - 1;
@@ -91,7 +93,6 @@ function ScoreBoard() {
     } else if (currentQuestionIndex >= maxIndex) {
       questionIndexHandler(currentQuestionIndex, true);
     }
-    setLoading(false);
   }
 
   useEffect(() => {
@@ -101,10 +102,15 @@ function ScoreBoard() {
   return (
     <TopNavLayout>
       <div>
-        <div className="text-center">ScoreBoard</div>;
-        <button onClick={onNextHandler}
-          className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-xl font-semibold font bg-green-500 rounded-xl">
-          {loading ? 'Loading' : 'Next'}
+        <div className="my-4 text-center text-2xl font-semibold">
+          ScoreBoard
+        </div>
+        ;
+        <button
+          onClick={onNextHandler}
+          className="w-2/5 flex justify-center m-auto py-2 px-4 border border-transparent text-xl font-semibold font bg-green-500 rounded-xl"
+        >
+          {loading ? "Loading..." : "Next"}
         </button>
       </div>
     </TopNavLayout>
