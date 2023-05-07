@@ -1,5 +1,5 @@
 // prisma
-import { prismaClient } from "../../../../lib/prisma";
+import prisma from "../../../../lib/prisma";
 
 const userCreateHandler = async (req, res) => {
   const { body, method } = req;
@@ -9,7 +9,7 @@ const userCreateHandler = async (req, res) => {
       try {
         let payload = body;
 
-        const userCreateResponse = await prismaClient.user.create({
+        const userCreateResponse = await prisma.user.create({
           data: payload,
         });
 

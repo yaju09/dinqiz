@@ -1,5 +1,5 @@
 // prisma
-import { prismaClient } from "../../../../../lib/prisma";
+import prisma from "../../../../../lib/prisma";
 
 const sessionUpdateHandler = async (req, res) => {
   const { body, method } = req;
@@ -9,7 +9,7 @@ const sessionUpdateHandler = async (req, res) => {
       try {
         let payload = body;
 
-        const sessionUpdateResponse = await prismaClient.session.update({
+        const sessionUpdateResponse = await prisma.session.update({
           where: { id: parseInt(session_id) },
           data: payload,
         });

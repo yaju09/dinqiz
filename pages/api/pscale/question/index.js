@@ -1,5 +1,5 @@
 // prisma
-import { prismaClient } from "../../../../lib/prisma";
+import prisma from "../../../../lib/prisma";
 
 const sessionCreateHandler = async (req, res) => {
   const { body, method } = req;
@@ -9,7 +9,7 @@ const sessionCreateHandler = async (req, res) => {
       try {
         let payload = body;
 
-        const questionCreateResponse = await prismaClient.question.create({
+        const questionCreateResponse = await prisma.question.create({
           data: payload,
         });
 
@@ -29,7 +29,7 @@ const sessionCreateHandler = async (req, res) => {
 
     case "GET":
       try {
-        const allQuestions = await prismaClient.question.findMany();
+        const allQuestions = await prisma.question.findMany();
 
         if (!allQuestions) throw new Error("Could not find questions.");
 
