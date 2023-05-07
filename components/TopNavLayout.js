@@ -22,6 +22,7 @@ function TopNavLayout({ children }) {
   function signOutHandler() {
     window.sessionStorage.removeItem("admin_key");
     window.sessionStorage.removeItem("quiz_user_email");
+    window.sessionStorage.removeItem("user_otp");
     router.push("/");
   }
 

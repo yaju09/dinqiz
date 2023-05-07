@@ -8,7 +8,7 @@ const sessionCreateHandler = async (req, res) => {
     case "POST":
       try {
         let payload = body;
-
+        console.log("======node", payload.session_otp);
         const sessionCreateResponse = await prisma.session.create({
           data: payload,
         });
@@ -31,7 +31,7 @@ const sessionCreateHandler = async (req, res) => {
       try {
         const sessionResponse = await prisma.session.findFirst({
           orderBy: {
-            id: "desc"
+            id: "desc",
           },
         });
 

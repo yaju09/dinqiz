@@ -37,9 +37,10 @@ function Question() {
     const timer = setTimeout(() => {
       setRemainingTime(questionDurationInSeconds);
     }, remainingTime * 1000);
-
+    const user_otp = window.sessionStorage.getItem("user_opt");
+    if (!user_otp) return;
     const interval = setInterval(() => {
-      fetch(pscaleAPI.SESSION_ENDPOINT, {
+      fetch(pscaleAPI.SESSION_WITH_OTP_ENDPOINT(user_otp), {
         method: "GET",
         headers: { "Content-Type": "application/json" },
       })
@@ -130,7 +131,7 @@ function Question() {
             return response.json();
           }
         })
-        .then((response) => { })
+        .then((response) => {})
         .catch((err) => {
           // Catch and display errors
         });
@@ -147,8 +148,9 @@ function Question() {
             <Clock className="w-8 h-6" />
             <div>
               {" "}
-              {`00:${remainingTime > 9 ? remainingTime : "0" + String(remainingTime)
-                }`}
+              {`00:${
+                remainingTime > 9 ? remainingTime : "0" + String(remainingTime)
+              }`}
             </div>
           </div>
           {questionData.length > 0 && (

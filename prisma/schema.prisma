@@ -17,6 +17,7 @@ model Session {
   completed_at           DateTime?
   is_completed           Boolean        @default(false)
   current_question_index Int            @default(0)
+  session_otp            String         @db.VarChar(255)
   UserResponse           UserResponse[]
 }
 

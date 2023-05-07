@@ -18,13 +18,9 @@ function UserRegistration() {
   //global context
   const { userName, setUserName, setCurrentUserId } = useContext(GlobalContext);
 
-  useEffect(() => {
-    const userEmail = window.sessionStorage.getItem("quiz_user_email");
-    if (userEmail == quizAdminKey) router.push("/question");
-  }, [router]);
-
   //local states
   const [email, setEmail] = useState("");
+  const [userOTP, setUserOTP] = useState("");
   const [adminKey, setAdminKey] = useState("");
   const [loader, setLoader] = useState(false);
 
@@ -49,6 +45,7 @@ function UserRegistration() {
       .then((response) => {
         window.sessionStorage.setItem("quiz_user_email", email);
         window.sessionStorage.setItem("admin_key", adminKey);
+        window.sessionStorage.setItem("user_otp", userOTP);
         setCurrentUserId(response.data.id);
         setLoader(false);
         router.push("/welcome");
@@ -64,15 +61,15 @@ function UserRegistration() {
       <Head>
         <title>Registration Page</title>
       </Head>
-      <div className="max-w-md w-full space-y-8">
+      <div className="max-w-md w-full ">
         <div>
           <h2 className="mt-6 text-center text-3xl font-semibold text-gray-900">
             User Registration
           </h2>
         </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm -space-y-px">
-            <div className="my-6">
+        <form className="mt-8" onSubmit={handleSubmit}>
+          <div className="rounded-md shadow-sm ">
+            <div className="my-4">
               <label>User Name</label>
               <input
                 id="user-name"
@@ -81,11 +78,11 @@ function UserRegistration() {
                 required
                 value={userName}
                 onChange={(event) => setUserName(event.target.value)}
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="User name"
+                className="rounded-none  w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="User name..."
               />
             </div>
-            <div className="my-6">
+            <div className="my-4">
               <label>Email address</label>
               <input
                 id="email-address"
@@ -94,13 +91,25 @@ function UserRegistration() {
                 required
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Email address"
+                className="rounded-none  w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="Email address..."
+              />
+            </div>
+            <div className="my-4">
+              <label>Session OTP</label>
+              <input
+                id="user-otp"
+                name="user_otp"
+                type="user_otp"
+                value={userOTP}
+                onChange={(event) => setUserOTP(event.target.value)}
+                className=" rounded-none  w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="Session OTP..."
               />
             </div>
           </div>
 
-          <div className="my-6">
+          <div className="my-8">
             <label>{"Admin Key (for admin only)"}</label>
             <input
               id="admin_key"
