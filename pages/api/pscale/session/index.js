@@ -30,8 +30,8 @@ const sessionCreateHandler = async (req, res) => {
     case "GET":
       try {
         const sessionResponse = await prisma.session.findFirst({
-          where: {
-            is_completed: false,
+          orderBy: {
+            id: "desc"
           },
         });
 

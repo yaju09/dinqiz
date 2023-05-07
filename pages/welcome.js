@@ -47,6 +47,7 @@ function Welcome() {
         .then((response) => {
           if (response.data.is_completed === false) {
             clearInterval(interval);
+            setCurrentSessionId(response.data.id);
             router.push("/question");
           }
         })
@@ -54,7 +55,7 @@ function Welcome() {
           // Catch and display errors
         });
     }, 2000);
-  }, [router, adminKey]);
+  }, [router, adminKey, setCurrentSessionId]);
 
   //for admin only
   function routeChangeHandler() {

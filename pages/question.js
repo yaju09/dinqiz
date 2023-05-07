@@ -57,7 +57,7 @@ function Question() {
           );
           console.log("====4444", response.data.is_completed);
           setCurrentQuestionIndex(currentQuestionIndex);
-          setRemainingTime(questionDurationInSeconds);
+          // setRemainingTime(questionDurationInSeconds - 1);
           if (response.data.is_completed) {
             router.push("/end");
             clearTimeout(timer);
@@ -130,7 +130,7 @@ function Question() {
             return response.json();
           }
         })
-        .then((response) => {})
+        .then((response) => { })
         .catch((err) => {
           // Catch and display errors
         });
@@ -147,9 +147,8 @@ function Question() {
             <Clock className="w-8 h-6" />
             <div>
               {" "}
-              {`00:${
-                remainingTime > 9 ? remainingTime : "0" + String(remainingTime)
-              }`}
+              {`00:${remainingTime > 9 ? remainingTime : "0" + String(remainingTime)
+                }`}
             </div>
           </div>
           {questionData.length > 0 && (

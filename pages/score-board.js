@@ -22,6 +22,8 @@ function ScoreBoard() {
   //local states
   const [questionData, setQuestionData] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [loading, setLoading] = useState(false);
+
   console.log("===curr question index", currentQuestionIndex);
   //get all questions data
   useEffect(() => {
@@ -78,24 +80,19 @@ function ScoreBoard() {
     [router, currentSessionId]
   );
 
-  useEffect(() => {
+  function onNextHandler() {
+    setLoading(true);
     if (!questionData?.length) return;
 
-    const interval = setInterval(() => {
-      const maxIndex = questionData.length - 1;
-      if (currentQuestionIndex < maxIndex) {
-        setCurrentQuestionIndex(currentQuestionIndex + 1);
-        questionIndexHandler(currentQuestionIndex + 1, false);
-      } else if (currentQuestionIndex >= maxIndex) {
-        questionIndexHandler(currentQuestionIndex, true);
-        clearInterval(interval);
-      }
-    }, questionDurationInSeconds * 1000);
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, [currentQuestionIndex, questionData?.length, questionIndexHandler]);
+    const maxIndex = questionData.length - 1;
+    if (currentQuestionIndex < maxIndex) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+      questionIndexHandler(currentQuestionIndex + 1, false);
+    } else if (currentQuestionIndex >= maxIndex) {
+      questionIndexHandler(currentQuestionIndex, true);
+    }
+    setLoading(false);
+  }
 
   useEffect(() => {
     const savedAdminKey = window.sessionStorage.getItem("admin_key");
@@ -103,7 +100,13 @@ function ScoreBoard() {
   }, [router]);
   return (
     <TopNavLayout>
-      <div className="text-center">ScoreBoard</div>;
+      <div>
+        <div className="text-center">ScoreBoard</div>;
+        <button onClick={onNextHandler}
+          className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-xl font-semibold font bg-green-500 rounded-xl">
+          {loading ? 'Loading' : 'Next'}
+        </button>
+      </div>
     </TopNavLayout>
   );
 }
