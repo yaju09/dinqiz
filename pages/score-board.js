@@ -165,8 +165,8 @@ function ScoreBoard() {
 
     const interval = setInterval(() => {
       onAnswered(currentSessionId, questionData[currentQuestionIndex].id)
-    }, 5000);
-    const clearance = setTimeout(function () { clearInterval(interval) }, questionDurationInSeconds * 5000);
+    }, 10000);
+    const clearance = setTimeout(function () { clearInterval(interval); clearTimeout(clearance); }, questionDurationInSeconds * 5000);
 
   }, [currentQuestionIndex, currentSessionId, onAnswered, questionData]);
 
