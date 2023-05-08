@@ -7,6 +7,7 @@ function UserAuth(WrappedComp) {
 
   function Wrapper(props) {
     const router = useRouter();
+    // if user email id is not there in session storage then always redirect user to registration page
     useEffect(() => {
       const userEmail = window.sessionStorage.getItem("quiz_user_email");
       if (!userEmail) router.push("/");

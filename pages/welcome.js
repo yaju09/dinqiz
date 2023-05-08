@@ -17,13 +17,14 @@ function Welcome() {
   const router = useRouter();
 
   //global context
-  const { userName, setCurrentSessionId } = useContext(GlobalContext);
+  const { userName } = useContext(GlobalContext);
 
   //local state
   const [adminKey, setAdminKey] = useState("");
   const [loader, setLoader] = useState(false);
   const [sessionOTP, setSessionOTP] = useState(null);
 
+  // to get the current session id from session storage and set it in local state
   useEffect(() => {
     const savedAdminKey = window.sessionStorage.getItem("admin_key");
     if (savedAdminKey) {
@@ -63,7 +64,7 @@ function Welcome() {
         .then((response) => {
           if (response.data.is_completed === false) {
             clearInterval(interval);
-            setCurrentSessionId(response.data.id);
+            window.sessionStorage.setItem("sessionId", response.data.id);
             router.push("/question");
           }
         })
@@ -71,7 +72,7 @@ function Welcome() {
           // Catch and display errors
         });
     }, 2000);
-  }, [router, adminKey, setCurrentSessionId]);
+  }, [router, adminKey]);
 
   //for admin only
   const routeChangeHandler = useCallback(() => {
@@ -97,7 +98,7 @@ function Welcome() {
         }
       })
       .then((response) => {
-        setCurrentSessionId(response.data.id);
+        window.sessionStorage.setItem("sessionId", response.data.id);
         setLoader(false);
         router.push("/score-board");
       })
@@ -106,7 +107,7 @@ function Welcome() {
 
         // Catch and display errors
       });
-  }, [router, sessionOTP, setCurrentSessionId]);
+  }, [router, sessionOTP]);
 
   return (
     <>

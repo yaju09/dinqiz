@@ -15,21 +15,27 @@ import { questionDurationInSeconds } from "../constants/globalConstants";
 import { GlobalContext } from "../components/utils/globalContext";
 // api routes
 import * as pscaleAPI from "../constants/node-api";
-//hook
-import useInterval from "../hooks/useInterval";
 
 function Question() {
   //router
   const router = useRouter();
 
   //global context
-  const { currentUserId, currentSessionId } = useContext(GlobalContext);
+  const { currentUserId } = useContext(GlobalContext);
 
   //local states
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [remainingTime, setRemainingTime] = useState(questionDurationInSeconds);
   const [questionData, setQuestionData] = useState([]);
-  const [currentSession, setCurrentSession] = useState(null);
+  const [currentSessionId, setCurrentSessionId] = useState(null);
+
+  // to get the current session id from session storage and set it in local state
+  useEffect(() => {
+    const sessionId = window.sessionStorage.getItem("sessionId");
+    if (!sessionId) return;
+    setCurrentSessionId(sessionId);
+  }, []);
+
   // To run the timer, to change question and to redirect to end page if no more questions are there.
   useEffect(() => {
     const user_otp = window.sessionStorage.getItem("user_otp");
@@ -68,6 +74,8 @@ function Question() {
       clearInterval(interval);
     };
   }, [currentQuestionIndex, remainingTime, router, questionData.length]);
+
+  //fetch all questions from planet scale
   useEffect(() => {
     fetch(pscaleAPI.QUESTION_ENDPOINT, {
       method: "GET",
@@ -101,9 +109,14 @@ function Question() {
     };
   }, [router]);
 
+  // handler to submit the response of user
   const responseSubmitHandler = useCallback(
     (userAnswer) => {
       const question = questionData[currentQuestionIndex];
+
+      if (!currentSessionId || !currentUserId || !question || !userAnswer)
+        return;
+
       let payload = {
         user_id: currentUserId,
         session_id: currentSessionId,

@@ -6,15 +6,12 @@ export const GlobalStateProvider = ({ children }) => {
   const [userName, setUserName] = useState("");
 
   const [currentUserId, setCurrentUserId] = useState(null);
-  const [currentSessionId, setCurrentSessionId] = useState(null);
 
   const state = {
     userName,
     setUserName,
     currentUserId,
     setCurrentUserId,
-    currentSessionId,
-    setCurrentSessionId,
   };
 
   return (
