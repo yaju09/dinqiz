@@ -6,3 +6,5 @@ export const SESSION_UPDATE_ENDPOINT = (session_id) =>
 export const USER_ENDPOINT = `/api/pscale/user`;
 export const USER_RESPONSE_ENDPOINT = `/api/pscale/user-response`;
 export const QUESTION_ENDPOINT = `/api/pscale/question`;
+export const QUESTION_WITH_ID_ENDPOINT = (question_id) =>
+  `/api/pscale/question/${question_id}`;

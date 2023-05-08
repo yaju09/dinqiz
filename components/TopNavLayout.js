@@ -30,6 +30,13 @@ function TopNavLayout({ children }) {
     <div className="w-full h-screen">
       <div className="h-16 flex gap-4 justify-end items-center bg-gray-400">
         {quizAdminKey == adminKey && (
+          <Link href={"/all-questions"}>
+            <div className="px-2 h-full flex items-center text-lg font-semibold">
+              All Questions
+            </div>
+          </Link>
+        )}
+        {quizAdminKey == adminKey && (
           <Link href={"/question-create"}>
             <div className="px-2 h-full flex items-center text-lg font-semibold">
               Upload Questions

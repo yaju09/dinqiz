@@ -25,6 +25,7 @@ function QuestionCreate() {
     ],
     answer: "",
   });
+  const [loader, setLoader] = useState(false);
 
   useEffect(() => {
     const savedAdminKey = window.sessionStorage.getItem("admin_key");
@@ -36,6 +37,7 @@ function QuestionCreate() {
       alert("Please select correct option.");
       return;
     }
+    setLoader(true);
     event.preventDefault();
     let payload = {
       body: questionData,
@@ -61,9 +63,11 @@ function QuestionCreate() {
           ],
           answer: "",
         });
+        setLoader(false);
       })
       .catch((err) => {
         // Catch and display errors
+        setLoader(false);
       });
   };
 
@@ -136,8 +140,9 @@ function QuestionCreate() {
           <button
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             type="submit"
+            disabled={loader}
           >
-            Submit
+            {loader ? `Submitting...` : "Submit"}
           </button>
         </form>
       </div>
