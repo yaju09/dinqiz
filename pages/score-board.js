@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState, useContext } from "react";
 //next
 import { useRouter } from "next/router";
+import React from "react";
 // global const
 import {
   quizAdminKey,
@@ -12,7 +13,6 @@ import { GlobalContext } from "../components/utils/globalContext";
 import * as pscaleAPI from "../constants/node-api";
 // component
 import TopNavLayout from "../components/TopNavLayout";
-import { data } from "autoprefixer";
 
 function ScoreBoard() {
   //router
@@ -27,14 +27,15 @@ function ScoreBoard() {
 
   const [leaderBoard, setLeaderBoard] = useState({});
 
-  let pointsByRank = {
-    1: 5,
-    2: 3,
-    3: 1,
-  };
+  const pointsByRank = React.useMemo(() => {
+    return {
+      1: 5,
+      2: 3,
+      3: 1,
+    }
+  }, []);
 
 
-  console.log("===curr question index", currentQuestionIndex);
   //get all questions data
   useEffect(() => {
     fetch(pscaleAPI.QUESTION_ENDPOINT, {
@@ -105,7 +106,11 @@ function ScoreBoard() {
     }
   }
 
-  function onAnswered() {
+  const onAnswered = useCallback((session_id, question_id) => {
+    if (!session_id || !question_id) {
+      return;
+    }
+
     fetch(pscaleAPI.FILTERED_USER_RESPONSE_ENDPOINT(session_id, question_id), {
       method: "GET",
       headers: { "Content-Type": "application/json" },
@@ -116,37 +121,54 @@ function ScoreBoard() {
         }
       })
       .then((response) => {
-        if (response.data) {
-          data = response.data;
-          data.forEach((row, index) => {
-            if (row.user_id in leaderBoard) {
-              setLeaderBoard((prev) => {
-                let t = { ...prev };
-                t[row.user_id]['score'] += index + 1 > 3 ? 0 : pointsByRank[index + 1]
+        let data = response.data;
+
+        data.forEach((row, index) => {
+          if (row.user_id in leaderBoard) {
+            setLeaderBoard((prev) => {
+              let t = { ...prev };
+              if (t[row.user_id]['question_ids']?.includes(question_id)) {
                 return t;
-              })
-            } else {
-              setLeaderBoard((prev) => {
-                let t = { ...prev };
-                t[row.user_id] = {
-                  'name': row.user.name,
-                  'email': row.user.email,
-                  'score': index + 1 > 3 ? 0 : pointsByRank[index + 1],
-                };
-                return t;
-              })
-            }
-          })
-        }
+              }
+
+              t[row.user_id]['score'] += index + 1 > 3 ? 0 : pointsByRank[index + 1]
+              t[row.user_id]['question_ids'].push(question_id);
+              return t;
+            })
+          } else {
+            setLeaderBoard((prev) => {
+              let t = { ...prev };
+              t[row.user_id] = {
+                'name': row.user.username,
+                'email': row.user.email,
+                'score': index + 1 > 3 ? 0 : pointsByRank[index + 1],
+                'question_ids': [question_id]
+              };
+              return t;
+            })
+          }
+        })
       })
 
 
       .catch((err) => {
         // Catch and display errors
       });
-  }
+  }, [leaderBoard, pointsByRank]);
 
 
+
+  useEffect(() => {
+    if (!questionData?.length) {
+      return;
+    }
+
+    const interval = setInterval(() => {
+      onAnswered(currentSessionId, questionData[currentQuestionIndex].id)
+    }, 5000);
+    const clearance = setTimeout(function () { clearInterval(interval) }, questionDurationInSeconds * 5000);
+
+  }, [currentQuestionIndex, currentSessionId, onAnswered, questionData]);
 
 
 

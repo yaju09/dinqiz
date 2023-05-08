@@ -15,7 +15,7 @@ const questionDataHandler = async (req, res) => {
                         is_correct: true,
                     },
                     include: {
-                        user,
+                        user: true
                     },
                     orderBy: {
                         createdAt: "asc"
