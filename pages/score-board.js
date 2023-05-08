@@ -106,56 +106,6 @@ function ScoreBoard() {
     }
   }
 
-  const onAnswered = useCallback((session_id, question_id) => {
-    if (!session_id || !question_id) {
-      return;
-    }
-
-    fetch(pscaleAPI.FILTERED_USER_RESPONSE_ENDPOINT(session_id, question_id), {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-    })
-      .then((response) => {
-        if (response.status == 200) {
-          return response.json();
-        }
-      })
-      .then((response) => {
-        let data = response.data;
-
-        data.forEach((row, index) => {
-          if (row.user_id in leaderBoard) {
-            setLeaderBoard((prev) => {
-              let t = { ...prev };
-              if (t[row.user_id]['question_ids']?.includes(question_id)) {
-                return t;
-              }
-
-              t[row.user_id]['score'] += index + 1 > 3 ? 0 : pointsByRank[index + 1]
-              t[row.user_id]['question_ids'].push(question_id);
-              return t;
-            })
-          } else {
-            setLeaderBoard((prev) => {
-              let t = { ...prev };
-              t[row.user_id] = {
-                'name': row.user.username,
-                'email': row.user.email,
-                'score': index + 1 > 3 ? 0 : pointsByRank[index + 1],
-                'question_ids': [question_id]
-              };
-              return t;
-            })
-          }
-        })
-      })
-
-
-      .catch((err) => {
-        // Catch and display errors
-      });
-  }, [leaderBoard, pointsByRank]);
-
 
 
   useEffect(() => {
@@ -163,12 +113,61 @@ function ScoreBoard() {
       return;
     }
 
+    function onAnswered(session_id, question_id) {
+      if (!session_id || !question_id) {
+        return;
+      }
+
+      fetch(pscaleAPI.FILTERED_USER_RESPONSE_ENDPOINT(session_id, question_id), {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      })
+        .then((response) => {
+          if (response.status == 200) {
+            return response.json();
+          }
+        })
+        .then((response) => {
+          let data = response.data;
+
+          data.forEach((row, index) => {
+            if (row.user_id in leaderBoard) {
+              if (leaderBoard[row.user_id]['question_ids']?.includes(question_id)) {
+                return;
+              }
+              setLeaderBoard((prev) => {
+                let t = { ...prev };
+                t[row.user_id]['score'] += index + 1 > 3 ? 0 : pointsByRank[index + 1]
+                t[row.user_id]['question_ids'].push(question_id);
+                return t;
+              })
+            } else {
+              setLeaderBoard((prev) => {
+                let t = { ...prev };
+                t[row.user_id] = {
+                  'name': row.user.username,
+                  'email': row.user.email,
+                  'score': index + 1 > 3 ? 0 : pointsByRank[index + 1],
+                  'question_ids': [question_id]
+                };
+                return t;
+              })
+            }
+          })
+        })
+
+
+        .catch((err) => {
+          // Catch and display errors
+        });
+    }
+
     const interval = setInterval(() => {
       onAnswered(currentSessionId, questionData[currentQuestionIndex].id)
     }, 10000);
     const clearance = setTimeout(function () { clearInterval(interval); clearTimeout(clearance); }, questionDurationInSeconds * 5000);
 
-  }, [currentQuestionIndex, currentSessionId, onAnswered, questionData]);
+  }, [currentQuestionIndex, currentSessionId, leaderBoard, pointsByRank, questionData]);
 
 
 
