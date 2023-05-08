@@ -187,30 +187,33 @@ function ScoreBoard() {
           onClick={onNextHandler}
           className="w-2/5 flex justify-center m-auto py-2 px-4 border border-transparent text-xl font-semibold font bg-green-500 rounded-xl"
         >
-          {loading ? "Loading..." : "Next"}
+          {loading ? "Loading..." : "Next Question"}
         </button>
         <p></p>
-        <table>
-          <thead>
-            <tr>
-              <th>User</th>
-              <th>email</th>
-              <th>Score</th>
-            </tr>
-          </thead>
-          <tbody>
-            {
-              Object.values(leaderBoard)
-                .map(item => (<tr key={item.email}>
-                  <td>{item.name}</td>
-                  <td>{item.email}</td>
-                  <td>{item.score}</td>
-                </tr>))
-            }
-          </tbody>
-        </table>
-      </div>
-    </TopNavLayout>
+        <br></br>
+        <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column', width: '100%' }}>
+          <table style={{ border: '1px solid', width: '80%' }}>
+            <thead>
+              <tr style={{ border: '1px solid' }}>
+                <th style={{ border: '1px solid' }}>User</th>
+                <th style={{ border: '1px solid' }}>email</th>
+                <th style={{ border: '1px solid' }}>Score</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                Object.values(leaderBoard)
+                  .map(item => (<tr key={item.email}>
+                    <td style={{ border: '1px solid' }}>{item.name}</td>
+                    <td style={{ border: '1px solid' }}>{item.email}</td>
+                    <td style={{ border: '1px solid' }}>{item.score}</td>
+                  </tr>))
+              }
+            </tbody>
+          </table >
+        </div>
+      </div >
+    </TopNavLayout >
   );
 }
 export default ScoreBoard;
