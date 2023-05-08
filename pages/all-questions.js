@@ -43,7 +43,7 @@ function AllQuestions() {
   }
   return (
     <div className="my-4 flex flex-col content-center">
-      <div className="text-center font-semibold text-2xl">Question Update</div>
+      <div className="text-center font-semibold text-2xl">All Questions</div>
       {allQuestions.map((question, index) => {
         return (
           <div
