@@ -8,8 +8,6 @@ import { GlobalContext } from "../components/utils/globalContext";
 import { v4 as uuid4 } from "uuid";
 // api routes
 import * as pscaleAPI from "../constants/node-api";
-// global const
-import { quizAdminKey } from "../constants/globalConstants";
 
 function UserRegistration() {
   //router
@@ -20,7 +18,7 @@ function UserRegistration() {
 
   //local states
   const [email, setEmail] = useState("");
-  const [userOTP, setUserOTP] = useState("");
+  const [sessionOTP, setSessionOTP] = useState("");
   const [adminKey, setAdminKey] = useState("");
   const [loader, setLoader] = useState(false);
 
@@ -45,7 +43,7 @@ function UserRegistration() {
       .then((response) => {
         window.sessionStorage.setItem("quiz_user_email", email);
         window.sessionStorage.setItem("admin_key", adminKey);
-        window.sessionStorage.setItem("user_otp", userOTP);
+        window.sessionStorage.setItem("session_otp", sessionOTP);
         setCurrentUserId(response.data.id);
         setLoader(false);
         router.push("/welcome");
@@ -98,11 +96,12 @@ function UserRegistration() {
             <div className="my-4">
               <label>Session OTP</label>
               <input
-                id="user-otp"
-                name="user_otp"
-                type="user_otp"
-                value={userOTP}
-                onChange={(event) => setUserOTP(event.target.value)}
+                id="session-otp"
+                name="session_otp"
+                type="session_otp"
+                required
+                value={sessionOTP}
+                onChange={(event) => setSessionOTP(event.target.value)}
                 className=" rounded-none  w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                 placeholder="Session OTP..."
               />

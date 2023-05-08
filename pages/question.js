@@ -38,10 +38,10 @@ function Question() {
 
   // To run the timer, to change question and to redirect to end page if no more questions are there.
   useEffect(() => {
-    const user_otp = window.sessionStorage.getItem("user_otp");
-    if (!user_otp) return;
+    const session_otp = window.sessionStorage.getItem("session_otp");
+    if (!session_otp) return;
     const interval = setInterval(() => {
-      fetch(pscaleAPI.SESSION_WITH_OTP_ENDPOINT(user_otp), {
+      fetch(pscaleAPI.SESSION_WITH_OTP_ENDPOINT(session_otp), {
         method: "GET",
         headers: { "Content-Type": "application/json" },
       })
