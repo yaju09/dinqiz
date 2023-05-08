@@ -33,7 +33,7 @@ function Question() {
   useEffect(() => {
     const sessionId = window.sessionStorage.getItem("sessionId");
     if (!sessionId) return;
-    setCurrentSessionId(sessionId);
+    setCurrentSessionId(parseInt(sessionId));
   }, []);
 
   // To run the timer, to change question and to redirect to end page if no more questions are there.
