@@ -194,15 +194,16 @@ function ScoreBoard() {
         ;
         <button
           onClick={onNextHandler}
-          className={`w-2/5 flex justify-center m-auto py-2 px-4 border border-transparent text-xl font-semibold font ${isQuizEnded ? "bg-red-500" : "bg-green-500"
-            } rounded-xl`}
+          className={`w-2/5 flex justify-center m-auto py-2 px-4 border border-transparent text-xl font-semibold font ${
+            isQuizEnded ? "bg-red-500" : "bg-green-500"
+          } rounded-xl`}
           disabled={loading || isQuizEnded}
         >
           {isQuizEnded
             ? "Quiz Ended"
             : loading
-              ? "Loading..."
-              : "Next Question"}
+            ? "Loading..."
+            : "Next Question"}
         </button>
         <p></p>
         <br></br>

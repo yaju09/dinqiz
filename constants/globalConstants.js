@@ -1,2 +1,2 @@
 export const quizAdminKey = "admin123";
-export const questionDurationInSeconds = 30;
+export const questionDurationInSeconds = 10;
