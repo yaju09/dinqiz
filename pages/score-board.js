@@ -135,7 +135,7 @@ function ScoreBoard() {
           let data = response.data;
           let scoreBoard = { ...leaderBoard };
           data.forEach((row, index) => {
-            if (row.user_id in leaderBoard) {
+            if (row.user_id in scoreBoard) {
               if (
                 scoreBoard[row.user_id]["question_ids"]?.includes(question_id)
               )
