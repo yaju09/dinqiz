@@ -22,6 +22,7 @@ function Welcome() {
   //local state
   const [adminKey, setAdminKey] = useState("");
   const [loader, setLoader] = useState(false);
+  const [sessionOTP, setSessionOTP] = useState(null);
 
   // to get the current session id from session storage and set it in local state
   useEffect(() => {
@@ -75,8 +76,10 @@ function Welcome() {
 
   //for admin only
   const routeChangeHandler = useCallback(() => {
-    const sessionOTP = window.sessionStorage.getItem("session_otp");
-    if (!sessionOTP) return;
+    if (!sessionOTP) {
+      alert("Please provide session OTP");
+      return;
+    }
     let payload = {};
 
     payload = {
@@ -104,7 +107,7 @@ function Welcome() {
 
         // Catch and display errors
       });
-  }, [router]);
+  }, [router, sessionOTP]);
 
   return (
     <>
@@ -116,6 +119,19 @@ function Welcome() {
             </div>
             {quizAdminKey == adminKey && (
               <>
+                <div className="mt-4 flex flex-col justify-center items-center">
+                  <div className="text-lg">Session OTP</div>
+                  <div className="w-2/5 border border-solid rounded border-gray-500">
+                    <input
+                      className="w-full border-gray-300 rounded-md  outline-none"
+                      type="text"
+                      value={sessionOTP}
+                      required
+                      onChange={(event) => setSessionOTP(event.target.value)}
+                    />
+                  </div>
+                </div>
+
                 <div className="my-6 flex justify-center">
                   <button
                     onClick={routeChangeHandler}
