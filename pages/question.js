@@ -148,9 +148,9 @@ function Question() {
       <Head>Question Page</Head>
       <TopNavLayout>
         <div className="w-full flex flex-col content-center">
-          <div className="mt-4 flex justify-center">
-            <Clock className="w-8 h-6" />
-            <div>
+          <div className="mt-4 flex justify-center gap-4 content-center">
+            <Clock className="w-10 h-10" />
+            <div className="text-2xl flex items-center">
               {" "}
               {`00:${
                 remainingTime > 9 ? remainingTime : "0" + String(remainingTime)
