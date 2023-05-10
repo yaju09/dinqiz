@@ -7,7 +7,7 @@ const questionDataHandler = async (req, res) => {
   switch (method) {
     case "GET":
       try {
-        const questionData = await prisma.userResponse.findMany({
+        const responseData = await prisma.userResponse.findMany({
           where: {
             session_id: parseInt(session_id),
             question_id: parseInt(question_id),
@@ -21,12 +21,22 @@ const questionDataHandler = async (req, res) => {
           },
         });
 
-        if (!questionData)
+        if (!responseData)
           throw new Error("Could not find question for the session.");
-
+        // considering only the first correct answer of a user
+        const filteredResponses = [];
+        responseData.forEach((response) => {
+          if (
+            !filteredResponses.some(
+              (responseData) => response.user_id == responseData.user_id
+            )
+          ) {
+            filteredResponses.push(response);
+          }
+        });
         res.status(200).json({
           status: "success",
-          data: questionData,
+          data: filteredResponses,
         });
       } catch (error) {
         res
