@@ -50,8 +50,10 @@ function Welcome() {
   useEffect(() => {
     const savedAdminKey = window.sessionStorage.getItem("admin_key");
     if (quizAdminKey == savedAdminKey) return;
+    const session_otp = window.sessionStorage.getItem("session_otp");
+    if (!session_otp) return;
     const interval = setInterval(() => {
-      fetch(pscaleAPI.SESSION_ENDPOINT, {
+      fetch(pscaleAPI.SESSION_WITH_OTP_ENDPOINT(session_otp), {
         method: "GET",
         headers: { "Content-Type": "application/json" },
       })
