@@ -31,7 +31,12 @@ function TopNavLayout({ children }) {
     <div className="w-full h-screen">
       <div className="h-20 w-full flex items-center justify-between bg-yellow-50 border-solid border-b-2 border-yellow-400">
         <div className="ml-2 h-20">
-          <Image src="/static/logo.png" alt="Logo" width={90} height={100} />
+          <Image
+            src="/static/dinanc_logo.png"
+            alt="Logo"
+            width={90}
+            height={100}
+          />
         </div>
         <div className="flex gap-4 justify-end items-center">
           {quizAdminKey == adminKey && (

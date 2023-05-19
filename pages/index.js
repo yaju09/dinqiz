@@ -62,7 +62,12 @@ function UserRegistration() {
       </Head>
       <div className="flex flex-col items-center">
         <div>
-          <Image src="/static/logo.png" alt="Logo" width={180} height={180} />
+          <Image
+            src="/static/dinanc_logo.png"
+            alt="Logo"
+            width={180}
+            height={180}
+          />
         </div>
         <div className="max-w-md w-full ">
           <div>
