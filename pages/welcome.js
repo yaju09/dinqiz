@@ -121,7 +121,7 @@ function Welcome() {
                 <div className="my-6 flex justify-center">
                   <button
                     onClick={routeChangeHandler}
-                    className="py-2 px-4 border-0 bg-blue-500 rounded-xl"
+                    className="py-2 px-4 border-0 bg-blue-500 rounded-xl text-white"
                   >
                     {`${loader ? "Starting..." : "Start Quiz"}`}
                   </button>
