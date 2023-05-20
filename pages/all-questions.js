@@ -7,6 +7,10 @@ import { useRouter } from "next/router";
 import { quizAdminKey } from "../constants/globalConstants";
 // api routes
 import * as pscaleAPI from "../constants/node-api";
+//components
+import TopNavLayout from "/components/TopNavLayout";
+//icons
+import LeftArrow from "../icons/leftArrow";
 
 function AllQuestions() {
   //router
@@ -42,22 +46,31 @@ function AllQuestions() {
     router.push(`/question-update/${question_id}`);
   }
   return (
-    <div className="my-4 flex flex-col content-center">
-      <div className="text-center font-semibold text-2xl">All Questions</div>
-      {allQuestions.map((question, index) => {
-        return (
-          <div
-            className="m-4 p-4 border border-solid border-gray-400 rounded  cursor-pointer"
-            key={question.id}
-            onClick={() => redirectHandler(question.id)}
-          >
-            <span>{index + 1}</span>
-            {". "}
-            {question.body.content}
-          </div>
-        );
-      })}
-    </div>
+    <TopNavLayout>
+      <div
+        className="m-2 flex items-center gap-2 cursor-pointer"
+        onClick={() => router.back()}
+      >
+        <LeftArrow className="h-6" />
+        <span>Go Back</span>
+      </div>
+      <div className="my-4 flex flex-col content-center">
+        <div className="text-center font-semibold text-2xl">All Questions</div>
+        {allQuestions.map((question, index) => {
+          return (
+            <div
+              className="m-4 p-4 border border-solid border-gray-400 rounded  cursor-pointer"
+              key={question.id}
+              onClick={() => redirectHandler(question.id)}
+            >
+              <span>{index + 1}</span>
+              {". "}
+              {question.body.content}
+            </div>
+          );
+        })}
+      </div>
+    </TopNavLayout>
   );
 }
 
